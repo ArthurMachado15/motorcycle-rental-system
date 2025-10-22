@@ -1,7 +1,5 @@
 # Setup Guide - Motorcycle Rental System
 
-## ✅ Project Successfully Created!
-
 The complete .NET 8 backend application has been initialized with all required features.
 
 ## 📂 Solution Structure
