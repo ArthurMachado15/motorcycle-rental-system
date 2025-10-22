@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: motorcycle-rental-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: MotorcycleRentalDb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - motorcycle-rental-network
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: motorcycle-rental-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"   # AMQP port
+      - "15672:15672" # Management UI port
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - motorcycle-rental-network
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: motorcycle-rental-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - motorcycle-rental-network
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
+  rabbitmq_data:
+  pgadmin_data:
+
+networks:
+  motorcycle-rental-network:
+    driver: bridge
