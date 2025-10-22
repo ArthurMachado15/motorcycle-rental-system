@@ -33,10 +33,11 @@ The solution follows **Clean Architecture** with clear separation of concerns:
 
 ## 🚀 Getting Started
 
-### 1. Navigate to the project directory
+### 1. Clone and navigate to the project directory
 
 ```bash
-cd Desafio-BackEnd
+git clone https://github.com/ArthurMachado15/motorcycle-rental-system.git
+cd motorcycle-rental-system
 ```
 
 ### 2. Start dependencies with Docker
@@ -48,10 +49,11 @@ docker-compose up -d
 This will start:
 - PostgreSQL on port 5432
 - RabbitMQ on port 5672 (management UI on port 15672)
+- PGAdmin on port 5050 (for database management)
 
 ### 3. Update database connection string
 
-Edit `src/Api/appsettings.Development.json` and update the connection string if needed:
+Edit `Api/appsettings.Development.json` and update the connection string if needed:
 
 ```json
 "ConnectionStrings": {
@@ -62,15 +64,31 @@ Edit `src/Api/appsettings.Development.json` and update the connection string if 
 ### 4. Run database migrations
 
 ```bash
-cd src/Infrastructure
-dotnet ef migrations add InitialCreate --startup-project ../Api
-dotnet ef database update --startup-project ../Api
+dotnet ef database update --project Infrastructure --startup-project Api
 ```
 
-### 5. Run the application
+Note: Migrations are already included in the project. If you need to create new migrations:
 
 ```bash
-cd src/Api
+dotnet ef migrations add MigrationName --project Infrastructure --startup-project Api
+```
+
+### 5. Build the solution
+
+```bash
+dotnet build
+```
+
+### 6. Run the application
+
+```bash
+dotnet run --project Api
+```
+
+Or navigate to the Api directory:
+
+```bash
+cd Api
 dotnet run
 ```
 
@@ -79,14 +97,14 @@ The API will be available at:
 - HTTP: http://localhost:5001
 - Swagger UI: https://localhost:7001/swagger
 
-### 6. Run tests
+### 7. Run tests
 
 ```bash
 # Unit tests
-dotnet test tests/UnitTests
+dotnet test UnitTests
 
 # Integration tests
-dotnet test tests/IntegrationTests
+dotnet test IntegrationTests
 
 # All tests
 dotnet test
@@ -143,16 +161,15 @@ dotnet test
 ## 📁 Project Structure
 
 ```
-MotorcycleRentalSystem/
-├── src/
-│   ├── Api/                      # REST API controllers and configuration
-│   ├── Application/              # Business logic, CQRS, DTOs, validators
-│   ├── Domain/                   # Core entities, enums, interfaces
-│   └── Infrastructure/           # Data access, messaging, file storage
-├── tests/
-│   ├── UnitTests/                # Unit tests
-│   └── IntegrationTests/         # Integration tests
+motorcycle-rental-system/
+├── Api/                          # REST API controllers and configuration
+├── Application/                  # Business logic, CQRS, DTOs, validators
+├── Domain/                       # Core entities, enums, interfaces
+├── Infrastructure/               # Data access, messaging, file storage
+├── UnitTests/                    # Unit tests
+├── IntegrationTests/             # Integration tests
 ├── docker-compose.yml            # Docker services configuration
+├── MotorcycleRentalSystem.sln    # Solution file
 └── README.md
 ```
 
@@ -212,12 +229,26 @@ Configure logging in `appsettings.json` using Serilog.
 ## 🐳 Docker Support
 
 The `docker-compose.yml` provides:
-- PostgreSQL 15
-- RabbitMQ 3 (with management plugin)
+- **PostgreSQL 15** - Database server on port 5432
+- **RabbitMQ 3** - Message broker with management plugin
+- **PGAdmin 4** - PostgreSQL management tool
 
-Access RabbitMQ Management UI at: http://localhost:15672
-- Username: guest
-- Password: guest
+### Access Management UIs:
+
+**RabbitMQ Management:** http://localhost:15672
+- Username: `guest`
+- Password: `guest`
+
+**PGAdmin:** http://localhost:5050
+- Email: `admin@admin.com`
+- Password: `admin`
+
+To connect to PostgreSQL in PGAdmin:
+- Host: `postgres` (or `host.docker.internal` if on Mac/Windows)
+- Port: `5432`
+- Database: `MotorcycleRentalDb`
+- Username: `postgres`
+- Password: `postgres`
 
 ## 📖 API Documentation
 
